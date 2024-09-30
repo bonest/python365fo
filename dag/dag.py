@@ -1,6 +1,13 @@
 from typing import List, Set   #, Type
 from collections import defaultdict
 
+import edges
+import nodes
+
+#from dag import edges
+#from dag import nodes
+
+
 class ProductDAGTraverseController:
     def __init__(self) -> None:
         self.__todoNodesSet: Set[str] = None # str skal være nodeid aka varenr i 365
@@ -25,7 +32,7 @@ class ProductDAGTraverseController:
     # def getParrentNode(self) -> ProductDagNode:
     #     return self.__parrentNode
     
-    def shouldTraverseNode(self, node: ProductDagNode) -> bool:
+    def shouldTraverseNode(self, node: nodes.ProductDagNode) -> bool:
         if node.getNodeId() in self._getTodoNodesSet():
             return True
         
@@ -34,7 +41,7 @@ class ProductDAGTraverseController:
     def addNodeIdToTodo(self, nodeId : str):
         self._getTodoNodesSet().add(nodeId)
     
-    def markNodeAsTraversed(self, node: ProductDagNode):
+    def markNodeAsTraversed(self, node: nodes.ProductDagNode):
         if node.getNodeId() in self._getTodoNodesSet():
             self._getTodoNodesSet().remove(node.getNodeId())
             self._getDoneNodesSet().add(node.getNodeId())
@@ -49,7 +56,7 @@ class ProductDAGTraverseNodeAble:
         self.resultat = []
         self.mindste: int = None
 
-    def handleTraversedNode(self, currentNode: ProductDagNode):
+    def handleTraversedNode(self, currentNode: nodes.ProductDagNode):
         if self.mindste:            
             self.mindste = min(self.mindste, currentNode.plc)
         else:
@@ -78,26 +85,26 @@ class ProductDAG:
 
     # Hvis der anvendes et set, vil man ikke kunne lægge objekter i, for de vil altid være forskellige.
     # Hvis noden skal indeholde andet data som skal bruges i traverseringen, så bør alle child objekter gemmes i et dictionary 
-    def addEdge(self, edge : ProductDagNodesEdge):
+    def addEdge(self, edge : edges.ProductDagNodesEdge):
         # Find id'en og smid edge objektet i listen. 
         self.__getGraph()[edge.getFromNode().getNodeId()].append(edge)
 
         """
         Tager en node og markerer den som behandlet, og kalder også resultable, handleNode metoden som kan gøre hvad som helst.
         """
-    def __markNodeAsTraversed(self, node: ProductDagNode, controller: ProductDAGTraverseController, traversable : ProductDAGTraverseNodeAble):
+    def __markNodeAsTraversed(self, node: nodes.ProductDagNode, controller: ProductDAGTraverseController, traversable : ProductDAGTraverseNodeAble):
         controller.markNodeAsTraversed(node)
         traversable.handleTraversedNode(node)
 
 
     # parm skiftes til _ i x++
-    def __goDeepFrom(self, parmStartNode: ProductDagNode, traverseController: ProductDAGTraverseController, resultable : ProductDAGTraverseNodeAble):
+    def __goDeepFrom(self, parmStartNode: nodes.ProductDagNode, traverseController: ProductDAGTraverseController, resultable : ProductDAGTraverseNodeAble):
         
         # Mark the node as handled.
         self.__markNodeAsTraversed(node = parmStartNode, controller = traverseController, traversable = resultable)
                 
         # Sæt child liste til at være listen og angiv typen via type hint, så code completion virker. 
-        childlist : List[ProductDagNodesEdge] = self.__getGraph()[parmStartNode.getNodeId()]
+        childlist : List[edges.ProductDagNodesEdge] = self.__getGraph()[parmStartNode.getNodeId()]
 
         # Gennemløb listen som findes i grafen for startnoden        
         for edge in childlist:
@@ -116,7 +123,7 @@ class ProductDAG:
             #     self.__goDeepFrom(edge.getToNode(), parmParrentNodesTodoSet, parmResultat)
 
 
-    def traverseDeep(self, startNode: ProductDagNode) -> ProductDAGTraverseNodeAble:
+    def traverseDeep(self, startNode: nodes.ProductDagNode) -> ProductDAGTraverseNodeAble:
         # Byg et set af parrentNodes der skal løbes igennem
         # parrentNodesTodo = set()
         traversController = ProductDAGTraverseController()
@@ -141,13 +148,13 @@ graf = ProductDAG()
 # opret forbindelser
 #graf.addEdge(ProductDagNodesEdge(ProductDagNode()))
 
-startNode = ProductDagNode.construct(vareNr="1", plc= 100)
+startNode = nodes.ProductDagNode.construct(vareNr="1", plc= 100)
 
-graf.addEdge(ProductDagNodesEdge(startNode, ProductDagNode.construct(vareNr= "2", plc = 20)))
-graf.addEdge(ProductDagNodesEdge(startNode, ProductDagNode.construct(vareNr= "3", plc = 30)))
-graf.addEdge(ProductDagNodesEdge(ProductDagNode.construct(vareNr="2", plc= 20), ProductDagNode.construct(vareNr= "4", plc = 40)))
-graf.addEdge(ProductDagNodesEdge(ProductDagNode.construct(vareNr="2", plc= 20), ProductDagNode.construct(vareNr= "5", plc = 2)))
-graf.addEdge(ProductDagNodesEdge(ProductDagNode.construct(vareNr="3", plc= 30), ProductDagNode.construct(vareNr= "6", plc = 3)))
+graf.addEdge(edges.ProductDagNodesEdge(startNode, nodes.ProductDagNode.construct(vareNr= "2", plc = 20)))
+graf.addEdge(edges.ProductDagNodesEdge(startNode, nodes.ProductDagNode.construct(vareNr= "3", plc = 30)))
+graf.addEdge(edges.ProductDagNodesEdge(nodes.ProductDagNode.construct(vareNr="2", plc= 20), nodes.ProductDagNode.construct(vareNr= "4", plc = 40)))
+graf.addEdge(edges.ProductDagNodesEdge(nodes.ProductDagNode.construct(vareNr="2", plc= 20), nodes.ProductDagNode.construct(vareNr= "5", plc = 2)))
+graf.addEdge(edges.ProductDagNodesEdge(nodes.ProductDagNode.construct(vareNr="3", plc= 30), nodes.ProductDagNode.construct(vareNr= "6", plc = 3)))
 
 '''
 dag.add_edge(1, 2)

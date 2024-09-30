@@ -32,18 +32,3 @@ class ProductDagNodeMeta:
         self.nodeLevel: int = 1
 
 
-
-
-
-# klasse der indeholder link mellem parrent og child noder    
-class ProductDagNodesEdge:    
-    def __init__(self, fromNode : ProductDagNode, toNode: ProductDagNode):
-        # Definerer fromNode og toNode som private
-        self.__fromNode = fromNode
-        self.__toNode = toNode
-
-    def getFromNode(self) -> ProductDagNode:
-        return self.__fromNode
-    
-    def getToNode(self) -> ProductDagNode:
-        return self.__toNode
