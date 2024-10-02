@@ -30,7 +30,10 @@ class Graph:
         queue = deque([start])  # Initialize a queue with the starting node
 
         while queue:
+            
+            # tag første element fra listen PopLeft svarer til 
             vertex = queue.popleft()  # Dequeue a vertex from the queue
+
             if vertex not in visited:
                 print(vertex, end=" ")  # Process the current node
                 visited.add(vertex)  # Mark the node as visited

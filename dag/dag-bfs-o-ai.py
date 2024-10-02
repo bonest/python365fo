@@ -42,6 +42,7 @@ class DAG:
     def add_edge(self, u: Node, v: Node) -> None:
         if u not in self._graph:
             self._graph[u] = []
+            
         self._graph[u].append(v)
         
         if v not in self._graph:
